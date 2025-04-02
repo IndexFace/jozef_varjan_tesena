@@ -1,1 +1,6 @@
-# jozef_varjan_tesena
+vypracovane ukoly:
+<ul>
+    <li> test analyza
+    <li> robot framework
+    <li> postman
+</ul>
