@@ -1,0 +1,197 @@
+{
+	"info": {
+		"_postman_id": "0596e488-0038-467a-b9b3-f76603ec60cb",
+		"name": "SpotifyAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8888620"
+	},
+	"item": [
+		{
+			"name": "check_server_set_data",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set('test_var', 'aaabbbccc')",
+							"pm.globals.set('user', 'smedjan')",
+							"pm.globals.set('api_version', 'v1')"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('check_response_status', () => {",
+							"    pm.response.to.have.status(401);",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "HEAD",
+				"header": [],
+				"url": {
+					"raw": "https://api.spotify.com/v1/{{api_version}}/{{user}}/playlist",
+					"protocol": "https",
+					"host": [
+						"api",
+						"spotify",
+						"com"
+					],
+					"path": [
+						"v1",
+						"{{api_version}}",
+						"{{user}}",
+						"playlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "request_tests",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var assert = require('chai').assert",
+							"var jsonData = pm.response.json();",
+							"",
+							"console.log(jsonData);",
+							"console.log(jsonData['error']['status']);",
+							"console.log(jsonData['error']['message']);",
+							"",
+							"pm.test('should have resCode 401', () => {",
+							"    pm.expect(jsonData['error']['status']).equals(401);",
+							"})",
+							"",
+							"pm.test('should have resCode 401 2', () => {",
+							"    let status = jsonData.error.status;",
+							"    pm.expect(status).equals(401);",
+							"})",
+							"",
+							"pm.test('assert resCode 401', function() {",
+							"    pm.assert.equal(pm.response.code, 401);",
+							"})",
+							"",
+							"pm.test('should have message', () => {",
+							"    let msg = jsonData.error.message;",
+							"    pm.expect(msg).equals('No token provided');",
+							"})",
+							"",
+							"pm.test('another test', () => {",
+							"    console.log('');",
+							"})",
+							"",
+							"pm.test('test function', function(){",
+							"    console.log('test function');",
+							"    console.log(this);",
+							"})",
+							"",
+							"pm.test('arrow function', () => {",
+							"    console.log('arrow function');",
+							"    console.log(this)",
+							"})",
+							"",
+							"pm.test('function arguments', function(testArg) {",
+							"    console.log('function args', testArg);",
+							"    console.log(arguments);",
+							"})",
+							"",
+							"pm.test('arrow arguments', (testArg) => {",
+							"    console.log('arrow args', testArg);",
+							"    console.log(arguments);",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"New Playlist\",\n    \"description\": \"New playlist description\",\n    \"public\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.spotify.com/v1/users/smedjan/playlists",
+					"protocol": "https",
+					"host": [
+						"api",
+						"spotify",
+						"com"
+					],
+					"path": [
+						"v1",
+						"users",
+						"smedjan",
+						"playlists"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "test_var",
+			"value": ""
+		}
+	]
+}

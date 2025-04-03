@@ -1,0 +1,14 @@
+{
+  "name": "postman-newman",
+  "version": "1.0.0",
+  "description": "local newman installation",
+  "main": "index.js",
+  "scripts": {
+    "test": "newman run ./SpotifyAPI.postman_collection.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "newman": "^6.2.1"
+  }
+}
