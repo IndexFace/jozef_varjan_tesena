@@ -7,27 +7,17 @@
 	},
 	"item": [
 		{
-			"name": "check_server_set_data",
+			"name": "Refresh_access_token",
 			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"pm.globals.set('test_var', 'aaabbbccc')",
-							"pm.globals.set('user', 'smedjan')",
-							"pm.globals.set('api_version', 'v1')"
-						],
-						"type": "text/javascript"
-					}
-				},
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test('check_response_status', () => {",
-							"    pm.response.to.have.status(401);",
-							"})",
+							"const setAccessToken = () => {",
+							"    pm.globals.set('access_token', pm.response.json().access_token);",
+							"}",
 							"",
+							"setAccessToken();",
 							""
 						],
 						"type": "text/javascript"
@@ -35,21 +25,55 @@
 				}
 			],
 			"request": {
-				"method": "HEAD",
-				"header": [],
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "57788cf65fd1468f8f340a62af97808c",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "0e5769ef033740ce833ea92f2305bcf9",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic 0e5769ef033740ce833ea92f2305bcf9:0e01a69ab2134b70900d9f6ee5a79444",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": "https://api.spotify.com/v1/{{api_version}}/{{user}}/playlist",
+					"raw": "https://accounts.spotify.com/api/token",
 					"protocol": "https",
 					"host": [
-						"api",
+						"accounts",
 						"spotify",
 						"com"
 					],
 					"path": [
-						"v1",
-						"{{api_version}}",
-						"{{user}}",
-						"playlist"
+						"api",
+						"token"
 					]
 				}
 			},
@@ -65,51 +89,10 @@
 							"var assert = require('chai').assert",
 							"var jsonData = pm.response.json();",
 							"",
-							"console.log(jsonData);",
-							"console.log(jsonData['error']['status']);",
-							"console.log(jsonData['error']['message']);",
-							"",
-							"pm.test('should have resCode 401', () => {",
-							"    pm.expect(jsonData['error']['status']).equals(401);",
+							"pm.test('return status code 200', () => {",
+							"    pm.expect(pm.response.code).equals(200);",
 							"})",
 							"",
-							"pm.test('should have resCode 401 2', () => {",
-							"    let status = jsonData.error.status;",
-							"    pm.expect(status).equals(401);",
-							"})",
-							"",
-							"pm.test('assert resCode 401', function() {",
-							"    pm.assert.equal(pm.response.code, 401);",
-							"})",
-							"",
-							"pm.test('should have message', () => {",
-							"    let msg = jsonData.error.message;",
-							"    pm.expect(msg).equals('No token provided');",
-							"})",
-							"",
-							"pm.test('another test', () => {",
-							"    console.log('');",
-							"})",
-							"",
-							"pm.test('test function', function(){",
-							"    console.log('test function');",
-							"    console.log(this);",
-							"})",
-							"",
-							"pm.test('arrow function', () => {",
-							"    console.log('arrow function');",
-							"    console.log(this)",
-							"})",
-							"",
-							"pm.test('function arguments', function(testArg) {",
-							"    console.log('function args', testArg);",
-							"    console.log(arguments);",
-							"})",
-							"",
-							"pm.test('arrow arguments', (testArg) => {",
-							"    console.log('arrow args', testArg);",
-							"    console.log(arguments);",
-							"})",
 							"",
 							""
 						],
@@ -117,22 +100,25 @@
 					}
 				}
 			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"auth": {
-					"type": "oauth2",
-					"oauth2": [
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "addTokenTo",
-							"value": "header",
+							"key": "token",
+							"value": "{{access_token}}",
 							"type": "string"
 						}
 					]
 				},
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"New Playlist\",\n    \"description\": \"New playlist description\",\n    \"public\": false\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -140,7 +126,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://api.spotify.com/v1/users/smedjan/playlists",
+					"raw": "https://api.spotify.com/v1/albums/4aawyAB9vmqN3uQ7FjRGTy",
 					"protocol": "https",
 					"host": [
 						"api",
@@ -149,9 +135,8 @@
 					],
 					"path": [
 						"v1",
-						"users",
-						"smedjan",
-						"playlists"
+						"albums",
+						"4aawyAB9vmqN3uQ7FjRGTy"
 					]
 				}
 			},
