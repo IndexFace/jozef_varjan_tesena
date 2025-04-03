@@ -6,7 +6,7 @@
   "scripts": {
     "test": "newman run ./SpotifyAPI.postman_collection.json"
   },
-  "author": "",
+  "author": "jozef varjan",
   "license": "ISC",
   "dependencies": {
     "newman": "^6.2.1"
