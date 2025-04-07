@@ -1,43 +1,32 @@
 *** Settings ***
 Library    SeleniumLibrary
+Resource    ${CURDIR}/../resources/commons.robot
+Resource    ${CURDIR}/../resources/variables.resource
 
+Suite Setup    Spust prohlizec Chrome    open_url=${eshop_url}    assert_url=${eshop_assert_url}
 
 *** Variables ***
+# max. doba cekani na element
 ${implicit_wait_timeout}=    20s
-${test_url}=    http://automationexercise.com
+
 
 *** Keywords ***
-Spust prohlizec Chrome
-    Open Browser
-    ...    browser=chrome
-    ...    options=add_argument("--disable-popup-blocking");add_argument("--ignore-certificate-errors")
-    ...    url=${test_url}
-    Maximize Browser Window
-
-Potvrd GDPR
-    [Documentation]    pokud se objevi consent okno, potvrdi ho
-    ${btn_consent}=    Set Variable    //*[@aria-label='Consent']
-    ${je_viditelne_gdpr_okno}=    Run Keyword And Return Status    Page Should Contain Element    xpath=${btn_consent}
-    IF    ${je viditelne_gdpr_okno}
-        Click Element    xpath=${btn_consent}
-    ELSE
-        Log    message=GDPR okno se nezobrazilo, pokracuji...
-    END
-   
 
 
 *** Test Cases ***
 Registrovany uzivatel se hlasi nespravnym heslem
     [Documentation]    registrovany uzivatel, nespravne heslo
-    Spust prohlizec Chrome
     Potvrd GDPR
     Wait Until Page Contains Element    xpath=//*[contains(text(), 'Signup / Login')]
     Click Element    xpath=//*[contains(text(), 'Signup / Login')]
-    Input Text    xpath=//*[@data-qa='login-email']    text=index.face@mail.test
-    Input Password    xpath=//*[@data-qa='login-password']    password=invalid.123
+    Element Should Be Visible    xpath=//*[contains(text(), 'Login to your account')]
+    Input Text    
+    ...    xpath=//*[@data-qa='login-email']    
+    ...    text=index.face@mail.test
+    Input Password    
+    ...    xpath=//*[@data-qa='login-password']    
+    ...    password=invalid.123
     Click Element    xpath=//*[@data-qa='login-button']
-    Wait Until Page Contains Element    xpath=//*[contains(text(), 'Your email or password is incorrect!')]
-
-    #Sleep    120   
-
-# class="fc-choice-dialog fc-dialog"
+    Sleep    2s
+    Element Should Be Visible    
+    ...    xpath=//*[contains(text(), 'Your email or password is incorrect!')]   
