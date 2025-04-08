@@ -6,8 +6,6 @@ Resource    ${CURDIR}/../resources/variables.resource
 Suite Setup    Spust prohlizec Chrome    open_url=${eshop_url}    assert_url=${eshop_assert_url}
 
 *** Variables ***
-# max. doba cekani na element
-${implicit_wait_timeout}=    20s
 
 
 *** Keywords ***
@@ -31,4 +29,4 @@ Registrovany uzivatel se hlasi nespravnym heslem
     Sleep    2s
     Element Should Be Visible    
     ...    xpath://*[contains(text(), 'Your email or password is incorrect!')]   
-    
+    Close Browser
