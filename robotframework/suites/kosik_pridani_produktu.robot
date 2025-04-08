@@ -68,7 +68,7 @@ Kosik Pridani 2x Produkt
     ...    mnoz    ${mnoz_list}
     ...    celk    ${celk_list}
     # ----------------------
-    
+
     FOR    ${i}    IN RANGE    1    3
             ${row}=    Set Variable    //tbody/tr[@id='product-${i}']
             
@@ -85,8 +85,8 @@ Kosik Pridani 2x Produkt
             # popis produktu:
             ${desc_valid}=    Run Keyword And Return Status    
             ...    Element Should Contain    
-            ...    xpath:${row}/td[@class='cart_description']
-            ...    expected=${data}[popis][${i - 1}]
+                ...    xpath:${row}/td[@class='cart_description']
+                ...    expected=${data}[popis][${i - 1}]
             
             IF    not ${desc_valid}
                 Log    Produkt ${i} - popis neodpovida    level=WARN
@@ -96,8 +96,8 @@ Kosik Pridani 2x Produkt
             # cena produktu
             ${price_valid}=    Run Keyword And Return Status    
             ...    Element Should Contain    
-            ...    xpath:${row}/td[@class='cart_price']
-            ...    expected=${data}[cena][${i - 1}]
+                ...    xpath:${row}/td[@class='cart_price']
+                ...    expected=${data}[cena][${i - 1}]
             
             IF    not ${price_valid}
                 Log    Produkt ${i} - cena nedopovida    level=WARN
@@ -107,8 +107,8 @@ Kosik Pridani 2x Produkt
             # mnozstvi produktu
             ${qty_valid}=    Run Keyword And Return Status    
             ...    Element Should Contain    
-            ...    xpath:${row}/td[@class='cart_quantity']
-            ...    expected=${data}[mnoz][${i - 1}]
+                ...    xpath:${row}/td[@class='cart_quantity']
+                ...    expected=${data}[mnoz][${i - 1}]
             
             IF    not ${qty_valid}
                 Log    Product ${i} - mnozstvi neodpovida    level=WARN
@@ -118,8 +118,8 @@ Kosik Pridani 2x Produkt
             # celkova cena produktu 
             ${total_valid}=    Run Keyword And Return Status    
             ...    Element Should Contain    
-            ...    xpath:${row}/td[@class='cart_total']
-            ...    expected=${data}[celk][${i - 1}]
+                ...    xpath:${row}/td[@class='cart_total']
+                ...    expected=${data}[celk][${i - 1}]
             
             IF    not ${total_valid}
                 Log    Product ${i} - mnozstvi celkem neodpovida    level=WARN
