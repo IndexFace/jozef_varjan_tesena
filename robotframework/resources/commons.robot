@@ -17,7 +17,7 @@ Spust prohlizec Chrome
     Location Should Be    ${assert_url}
 
 
-Potvrd GDPR
+Potvrd GDPR Okno
     [Documentation]    pokud se objevi consent okno, potvrdi ho
     ${btn_consent}=    Set Variable    //*[@aria-label='Consent']
     ${je_viditelne_gdpr_okno}=    Run Keyword And Return Status    Page Should Contain Element    xpath=${btn_consent}
@@ -26,3 +26,14 @@ Potvrd GDPR
     ELSE
         Log    message=GDPR okno se nezobrazilo, pokracuji...
     END
+
+
+Odstran AdSense Reklamy
+    [Documentation]    Pokud jsou na strance iFrame Google AdSense reklamy, odstrani je
+    ${adSense_na_strance}=    Execute Javascript    return document.getElementsByTagName('iframe').length
+    IF    '${adSense_na_strance} != 0'
+        Execute JavaScript  
+        ...    const adFrames = document.querySelectorAll('iframe[id^="aswift_"]');
+        ...    adFrames.forEach(frame => frame.remove()); 
+    END
+    

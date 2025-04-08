@@ -1,0 +1,3 @@
+user: test uzivatel
+mail: index.face@mail2.test
+pass: Automat.123
