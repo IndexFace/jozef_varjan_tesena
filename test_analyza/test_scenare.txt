@@ -1,0 +1,50 @@
+Test TC_P_001: přidání jednoho produktu v různých velikostech a barvách
+  preconditions:
+  - uživatel je přihlášen do aplikace
+  - jazyk aplikace: Čeština
+  - měna: CZK Kč
+
+  kroky:
+  1. v sekci 'Oblíbené' klikni na produkt první zleva (tričko Hummingbird printed T-Shirt)
+  2. v comboboxu 'Velikost: S' zvol velikost M
+  3. radiobuttony 'Barva: Bílá' zvol černý
+  4. zvol 'Počet' 2 
+  5. btn 'PŘIDAT DO KOŠÍKU'
+  6. zobrazi se vyskakovací okno? -> POKRAČOVAT V NÁKUPU
+  7. v comboboxu 'Velikost: S' zvol velikost L
+  8. radiobuttony 'Barva: Bílá' zvol bílý
+  9. zvol 'Počet' 1 
+  10. btn 'PŘIDAT DO KOŠÍKU'
+  11. zobrazi se vyskakovací okno? -> POKRAČOVAT DO POKLADNY
+
+
+  exp.:
+  1. přesměrování na obrazovku produktu
+  2. název comboboxu se změní na 'Velikost: M'
+  3. - změna skupiny radiobtn 'Barva: Černá'
+     - změna img produktu (identický produkt v černé barvě)
+  (exp pro kroky 7-9)
+  11. na obrazovce 'NÁKUPNÍ KOŠÍK'
+  - 2x Velikost: M, Barva: Černá, , na obrázku je produkt v černé barvě, cena: 2x23,14 = 46,27
+  - 1x Velikost: L, Barva: Bílá, na obrázku je produkt v bílé barvě, cena: 1x23,14 = 23.14
+
+
+
+Test TC_N_002: přihlášení do aplikace, user neexistuje
+  preconditions:
+  - web aplikace
+  - test uživatel nonuser, nonsense.123 není v db aplikace
+
+  kroky:
+  1. v záhlaví stránky kliknout 'Přihlásit se'
+  2. na stránce 'Přihlaste se ke svému účtu':
+     a. zadat E-mail: nonuser@test.com
+     b. zadat Heslo: nonsense.123
+  3. btn 'Přihlásit se'
+
+  exp:
+  1. nad elementem 'E-mail' se zobrazi červený element 'Ověření se nezdařilo'
+
+
+
+

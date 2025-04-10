@@ -1,0 +1,192 @@
+Testovací analýza pro web 37.27.17.198:8084
+
+Přehled aplikace
+Aplikace hostovaná na IP adrese 37.27.17.198:8084 je eShop s drobnými doplňky do domácnosti. 
+
+Poskytuje funkce: 
+- autentizace uživatelů, 
+- správa informací a dat registrovaného uživatele,
+- prohlížení produktů, 
+- přidání produktů do košíku,
+- řazeni produktů podle kritérií,
+-- prodej (zestupně)
+-- důležitost
+-- název (zestupně/vzestupně)
+-- cena  (zestupně/vzestupně)
+- hledání v katalogu produktů,
+- správa košíku, 
+- zpracování plateb, 
+- volba jazykové mutace (ENG, CZ),
+- volba měny (CZK, EUR, USD),
+- přihlášení pro odebíráni newsletteru,
+- zákaznická podpora (formulář)
+
+
+Rozsah testování
+Testovací analýza bude pokrývat funkční aspekty, prvky UI/UX, výkonnostní aspekty a bezpečnostní funkce webových stránek.
+Klíčové oblasti testování
+
+
+1. Autentizace uživatelů
+
+Proces registrace
+- Registrace nového uživatele s platnými údaji
+- Validace povinných polí
+- Funkce ověření e-mailu
+- kontrola již existujících účtů
+- Požadavky na sílu hesla
+
+
+Funkce přihlášení
+- Přihlášení s platnými údaji
+- Přihlášení s neplatnými údaji
+- obnovení hesla
+
+
+
+2. Katalog produktů
+
+Prohlížení produktů
+- Navigace podle kategorií
+- Filtrování a řazení produktů
+- Funkce vyhledávání
+- Zobrazení detailů produktů
+
+
+Informace o produktu
+- Načítání obrázků
+- Volba barevné varianty produktu
+- Volba velikosti/rozměrů produktu
+- Zobrazení cen
+- Zobrazení slevy
+- Přidání/Zobrazení recenzí produktu
+- Popis/Detail produktu
+- Sdílení produktu na externích soc. sítích
+
+
+
+3. Nákupní košík
+
+Operace s košíkem
+- Přidání produktů do košíku
+- Aktualizace množství produktů
+- Odstranění produktů z košíku
+- Výpočty souhrnu košíku
+
+
+
+4. Pokladna
+
+Zpracování objednávky
+- Sběr informací o adrese
+- Výběr způsobu dopravy
+- Integrace platební metody
+- Kontrola souhrnu objednávky
+- Potvrzení objednávky
+
+
+
+5. Správa uživatelského účtu
+
+Správa profilu
+- Zobrazení a aktualizace informací profilu
+- Změna hesla
+- Přidáni adresy
+- Wishlist uživatele
+- Dobropisy
+- GDPR
+- Historie objednávek
+- Smazání účtu
+- Přihlášení k odběru newsletteru
+
+
+
+6. Testování UI/UX
+
+Responzivní design
+- Rozložení na různých velikostech obrazovky
+- Kompatibilita s mobilními zařízeními
+- Dotykové interakce
+- Kompatibilita prohlížečů
+- Doba načítání stránek
+
+
+
+7. Testování výkonu
+
+Výkon webu
+- Rychlost načítání stránek
+- Doba odezvy pod zátěží
+- Doba odezvy API
+- Výkon databázových dotazů
+
+
+
+8. Bezpečnostní testování
+
+Bezpečnostní aspekty
+- Validace vstupů formulářů
+- Ochrana CSRF
+- Zranitelnost XSS
+- Prevence SQL injection
+- Zabezpečené zpracování plateb
+
+
+
+--- Testovací přístup ---
+
+Manuální testování:
+- exploratory a validace UI/UX:
+
+Testování v různých prohlížečích:
+- viz. seznam prostředí níže
+
+Testování responzivního designu (mobile, tablet)
+
+Automatizované testování
+Pro regresní a funkční testování:
+
+Automatizace prohlížeče: RobotFramework (+ SeleniumLibrary)
+- testování API: Postman
+- Testování výkonu pomocí JMeter
+
+
+--- Testovací prostředí ---
+
+Více prohlížečů (Chrome, Firefox, Safari, Edge)
+Různá zařízení (Desktop, Tablet, Mobilní telefon)
+Různé operační systémy (Windows, macOS, Android, iOS)
+
+
+--- Analýza rizik ---
+
+Selhání zpracování plateb
+Problémy s výkonem během vysokého provozu
+Problémy s kompatibilitou napříč prohlížeči
+Problémy s registrací/přihlášením uživatelů
+
+
+--- Požadavky na testovací data --- 
+
+Testovací uživatelské účty:
+- Simulované platební informace
+- Data katalogu produktů
+- Dodací a fakturační adresy
+- Sady neplatných vstupních dat
+
+
+--- Testovací metriky ---
+- Stav provedení testovacího případu
+- Hustota defektů
+- Pokrytí testy
+- Poměr úspěšnosti/neúspěšnosti
+- Počet kritických defektů
+
+
+--- Doporučený rámec pro automatizaci testů ---
+- rozšířit RobotFramework systém o vývoj vlastních keywordů v jazyce Python
+-- modul 'robot'
+- integrovat externí funkcionalitu jiných použitých nástrojů:
+-- testování API: python modul 'requests'
+-- připojení k DB: vhodný python modul dle použité DB
+-- příp. jconn.jar (JDBC) volán jako 'subprocess'
