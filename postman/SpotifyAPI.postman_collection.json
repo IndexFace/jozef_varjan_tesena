@@ -7,18 +7,87 @@
 	},
 	"item": [
 		{
-			"name": "Refresh_access_token",
+			"name": "set_client_credentials",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const conn = {",
+							"    base_url: \"https://api.spotify.com\",",
+							"    api_version: \"v1\"",
+							"}",
+							"",
+							"const oauth2 = {",
+							"    url: {",
+							"        callback: \"http://localhost:8888\",",
+							"        auth: \"https://accounts.spotify.com/authorize\",",
+							"        token: \"https://accounts.spotify.com/api/token\",",
+							"    },",
+							"    client: {",
+							"        id: \"0e5769ef033740ce833ea92f2305bcf9\",",
+							"        secret: \"78a3eab40ddb41a3a434f7193ce1e6b7\"",
+							"    },",
+							"}",
+							"",
+							"// setuj host_url",
+							"pm.collectionVariables.set('baseUrl', `${conn.base_url}/${conn.api_version}`)",
+							"",
+							"// setuj promenne kolekce z objektu oauth2",
+							"pm.collectionVariables.set('clientID', oauth2.client.id);",
+							"pm.collectionVariables.set('clientSecret', oauth2.client.secret);",
+							"",
+							"pm.collectionVariables.set('url_callback', oauth2.url.callback);",
+							"pm.collectionVariables.set('url_authorize', oauth2.url.auth);",
+							"pm.collectionVariables.set('url_token', oauth2.url.token);",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"strictSSL": false
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://postman-echo.com/get",
+					"protocol": "https",
+					"host": [
+						"postman-echo",
+						"com"
+					],
+					"path": [
+						"get"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_authorization",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"const setAccessToken = () => {",
-							"    pm.globals.set('access_token', pm.response.json().access_token);",
-							"}",
-							"",
-							"setAccessToken();",
-							""
+							"const access_token = pm.response.json().access_token;",
+							"pm.collectionVariables.set('accessToken', access_token);"
 						],
 						"type": "text/javascript"
 					}
@@ -30,12 +99,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "57788cf65fd1468f8f340a62af97808c",
+							"value": "{{clientSecret}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "0e5769ef033740ce833ea92f2305bcf9",
+							"value": "{{clientID}}",
 							"type": "string"
 						}
 					]
@@ -44,7 +113,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Basic 0e5769ef033740ce833ea92f2305bcf9:0e01a69ab2134b70900d9f6ee5a79444",
+						"value": "Basic {{clientID}}:{{clientSecret}}",
 						"type": "text"
 					},
 					{
@@ -64,33 +133,61 @@
 					]
 				},
 				"url": {
-					"raw": "https://accounts.spotify.com/api/token",
-					"protocol": "https",
+					"raw": "{{url_token}}",
 					"host": [
-						"accounts",
-						"spotify",
-						"com"
-					],
-					"path": [
-						"api",
-						"token"
+						"{{url_token}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "request_tests",
+			"name": "get_curr_user_profile",
 			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"access_token\", \"BQDvxUQIy5HO9li37c8yZMB0IKhUYZJ73j82zWvmB3lp2WpbzPQLwtpXHDDt_igzNmClkMMGXJHTnJWYQ0H_p_hVw6kNKN-PjjPH2_6p-T3NBV9NPrfI17LEtzLsxJQR6yqiqVNjKuJU7Qq3gmCaM8sBebNDBzQ-lcEXPkHIzUu9IbOSkFV_exh9rhk4AEcbpbHhPpL1WZl2AnLonnBBNctFLPIoFZnao9voVDFKo7QURsdqrJo\");"
+						],
+						"type": "text/javascript"
+					}
+				},
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var assert = require('chai').assert",
-							"var jsonData = pm.response.json();",
+							"let jsonData = pm.response.json();",
 							"",
-							"pm.test('return status code 200', () => {",
+							"const user_ID = jsonData.id;",
+							"pm.collectionVariables.set(\"userID\", user_ID);",
+							"",
+							"const curr_user = jsonData.display_name;",
+							"",
+							"",
+							"pm.test('server vraci status code 200', () => {",
 							"    pm.expect(pm.response.code).equals(200);",
+							"})",
+							"",
+							"pm.test('server vraci http status OK', () => {",
+							"    pm.expect(pm.response.status).equals('OK')",
+							"})",
+							"",
+							"pm.test('jmeno usera', () => {",
+							"    pm.expect(curr_user).equals('Index_Face');",
+							"})",
+							"",
+							"pm.test('id usera', () => {",
+							"    pm.expect(jsonData.id).equals(pm.collectionVariables.get('userID'));",
+							"})",
+							"",
+							"pm.test('externi url usera', () => {",
+							"    const extURL = `https://open.spotify.com/user/${pm.collectionVariables.get('userID')}`",
+							"    pm.expect(jsonData.external_urls.spotify).equals(extURL);",
+							"})",
+							"",
+							"pm.test('user nema zadne followery', () => {",
+							"    pm.expect(jsonData.followers.total).equals(0);",
 							"})",
 							"",
 							"",
@@ -100,25 +197,392 @@
 					}
 				}
 			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
+					"type": "oauth2",
+					"oauth2": [
 						{
-							"key": "token",
-							"value": "{{access_token}}",
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "accessToken",
+							"value": "BQDp9DeJeoEf4qlHcryNZxJe2VJEXxMLYytjjpb7T1L3XmLUf7FInznB4AeHJCZ8bk6e8XyPN7qejZxn79TmPiNJTq7fj3gU5t4IUgCqzgYoM72HNH4zbATZo2WXtj9nNCCO552ERtfYbmC4GS2Vma7NT0kBO17HPVsPXFZkqiysP26LM3l0Acp8_Sxvh0JFFN-iwup7ogTqkisvJ7jjl-sWUoov6XooZDMW1iwgv5u9B1eVXVVVwOrJiBwd6IjeCmPHYw",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "{{url_token}}",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "{{url_callback}}",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "{{url_authorize}}",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "{{clientSecret}}",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "{{clientID}}",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "playlist-modify-public",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "my-user",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "spotify_token",
+							"type": "string"
+						},
+						{
+							"key": "challengeAlgorithm",
+							"value": "S256",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "queryParams",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman.",
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_artist",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// jmeno: Pitbull",
+							"const artist_id = '0TnOYISbd1XYRBk9myaseg';",
+							"pm.collectionVariables.set('artistID', artist_id);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"pm.test('server vraci status code 200', () => {",
+							"    pm.expect(pm.response.code).equals(200);",
+							"})",
+							"",
+							"pm.test('server vraci http status OK', () => {",
+							"    pm.expect(pm.response.status).equals('OK');",
+							"})",
+							"",
+							"pm.test('res id umelce odpovida id z req', () => {",
+							"    pm.expect(jsonData.id).equals(pm.collectionVariables.get('artistID'));",
+							"})",
+							"",
+							"pm.test('jmeno umelce - response json ma field \"name\"', () => {",
+							"    pm.expect(jsonData).to.include.keys('name')",
+							"})",
+							"",
+							"pm.test('vraci spravne jmeno umelce', () => {",
+							"    pm.expect(jsonData.name).equals('Pitbull');",
+							"})",
+							"",
+							"pm.test('spotify url obsahuje spravne artist_id', () => {",
+							"    const spotify_url = `https://open.spotify.com/artist/${pm.collectionVariables.get('artistID')}`;",
+							"    pm.expect(jsonData.external_urls.spotify).equals(spotify_url);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "accessToken",
+							"value": "BQD-kxITADNVCraPdIajRZ09kN6_IptBPVubk4qi3t68zul2lOImanOTGm5dpGTUDzeRhngLXfBVCurEqBtoZMRpfE8PhpEDCGy5CimOX5Ox50BmZ3D0W0UQMVhLjaaeXYfbzvQ6yeBwYR5jMtgooQ7GDDXEnPwEi10pIxBdV_qKKubzyjyJ2Us4dI1Fc8eO-shNe60VuIQ5Pw34qnKbrdqFiMPZvDC8yY8mzdxpQGJD4c3xAL5alvXGnCBt7-YtvIPgRQ",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "{{url_token}}",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "{{url_authorize}}",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "{{url_callback}}",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "{{clientSecret}}",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "{{clientID}}",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "playlist-modify-public",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "my-user",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "spotify_token",
+							"type": "string"
+						},
+						{
+							"key": "challengeAlgorithm",
+							"value": "S256",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "queryParams",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
 							"type": "string"
 						}
 					]
 				},
 				"method": "GET",
 				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/artists/{{artistID}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"artists",
+						"{{artistID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_playlist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const user = pm.response.json().owner.id;",
+							"// uloz data o playlistu do promennych kolekce:",
+							"pm.collectionVariables.set('playlistURL', pm.response.json().href);",
+							"pm.collectionVariables.set('playlistID', pm.response.json().id);",
+							"",
+							"",
+							"pm.test('server vraci status code 201', () => {",
+							"    pm.expect(pm.response.code).equals(201);",
+							"})",
+							"",
+							"pm.test('server vraci http status Created', () => {",
+							"    pm.expect(pm.response.status).equals('Created');",
+							"})",
+							"",
+							"pm.test('playlist ma spravny nazev', () => {",
+							"    const playlistName = pm.response.json().name;",
+							"    pm.expect(playlistName).equals('test playlist');",
+							"})",
+							"",
+							"pm.test('playlist je navazan na usera', () => {",
+							"    pm.expect(user).equals(pm.collectionVariables.get('userID'))",
+							"})",
+							"",
+							"pm.test('novy playlist nema followers', () => {",
+							"    const followers = pm.response.json().followers.total;",
+							"    pm.expect(followers).equals(0);",
+							"})",
+							"",
+							"pm.test('externi URL ma v path params userID', () => {",
+							"    const url = `https://open.spotify.com/user/${pm.collectionVariables.get('userID')}`;",
+							"    const ext_url = pm.response.json().owner.external_urls.spotify;",
+							"    pm.expect(ext_url).equals(url);",
+							"})",
+							"",
+							"pm.test('playlist je public', () => {",
+							"    const playlist_type = pm.response.json().public;",
+							"    pm.expect(playlist_type).to.equal(true);",
+							"})",
+							"",
+							"pm.test('playlist je prazdny', () => {",
+							"    const playlist_items = pm.response.json().tracks.items;",
+							"    pm.expect(playlist_items).to.be.an('array');",
+							"    pm.expect(playlist_items.length).to.equal(0);",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "accessToken",
+							"value": "BQDp9DeJeoEf4qlHcryNZxJe2VJEXxMLYytjjpb7T1L3XmLUf7FInznB4AeHJCZ8bk6e8XyPN7qejZxn79TmPiNJTq7fj3gU5t4IUgCqzgYoM72HNH4zbATZo2WXtj9nNCCO552ERtfYbmC4GS2Vma7NT0kBO17HPVsPXFZkqiysP26LM3l0Acp8_Sxvh0JFFN-iwup7ogTqkisvJ7jjl-sWUoov6XooZDMW1iwgv5u9B1eVXVVVwOrJiBwd6IjeCmPHYw",
+							"type": "string"
+						},
+						{
+							"key": "headerPrefix",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "{{url_callback}}",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "{{url_token}}",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "{{url_authorize}}",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "{{clientSecret}}",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "{{clientID}}",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "playlist-modify-public",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "my-user",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "spotify_token",
+							"type": "string"
+						},
+						{
+							"key": "challengeAlgorithm",
+							"value": "S256",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "queryParams",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "{\n    \"name\": \"test playlist\",\n    \"public\": true,\n    \"collaborative\": \"false\",\n    \"description\": \"spotify playlist v1.0\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -126,17 +590,133 @@
 					}
 				},
 				"url": {
-					"raw": "https://api.spotify.com/v1/albums/4aawyAB9vmqN3uQ7FjRGTy",
-					"protocol": "https",
+					"raw": "{{baseUrl}}/users/{{userID}}/playlists",
 					"host": [
-						"api",
-						"spotify",
-						"com"
+						"{{baseUrl}}"
 					],
 					"path": [
-						"v1",
-						"albums",
-						"4aawyAB9vmqN3uQ7FjRGTy"
+						"users",
+						"{{userID}}",
+						"playlists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add_track_to_playlist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('server vraci status code 201', () => {",
+							"    pm.expect(pm.response.code).equals(201);",
+							"});",
+							"",
+							"pm.test('server vraci http status Created', () => {",
+							"    pm.expect(pm.response.status).equals('Created');",
+							"});",
+							"",
+							"pm.test('response ma snapshot_id', () => {",
+							"    pm.expect(pm.response.json()).to.have.property('snapshot_id');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "{{url_token}}",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "{{url_callback}}",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "{{url_authorize}}",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "{{clientSecret}}",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "{{clientID}}",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "playlist-modify-public",
+							"type": "string"
+						},
+						{
+							"key": "state",
+							"value": "my-user",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "spotify_token",
+							"type": "string"
+						},
+						{
+							"key": "challengeAlgorithm",
+							"value": "S256",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "queryParams",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"uris\": [\n        \"spotify:track:4iV5W9uYEdYUVa79Axb7Rh\"\n    ],\n    \"position\": 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/playlists/{{playlistID}}/tracks",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"playlists",
+						"{{playlistID}}",
+						"tracks"
 					]
 				}
 			},
@@ -175,7 +755,47 @@
 	],
 	"variable": [
 		{
-			"key": "test_var",
+			"key": "clientID",
+			"value": ""
+		},
+		{
+			"key": "clientSecret",
+			"value": ""
+		},
+		{
+			"key": "url_callback",
+			"value": ""
+		},
+		{
+			"key": "url_authorize",
+			"value": ""
+		},
+		{
+			"key": "url_token",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": ""
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "userID",
+			"value": ""
+		},
+		{
+			"key": "playlistURL",
+			"value": ""
+		},
+		{
+			"key": "playlistID",
+			"value": ""
+		},
+		{
+			"key": "artistID",
 			"value": ""
 		}
 	]
